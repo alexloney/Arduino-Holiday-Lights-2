@@ -1,51 +1,41 @@
 #include <FastLED.h>
 
-#include "bounce-animation.h"
 #include "defines.h"
-#include "flame-flicker-animation.h"
 #include "light-animation.h"
-#include "list.hpp"
 #include "settings.hpp"
-#include "solid-animation.h"
+
+#include "bounce-animation.h"
+#include "rain-animation.h"
+// #include "flame-flicker-animation.h"
+// #include "solid-animation.h"
 #include "stack-animation.h"
+// #include "lightning-animation.h"
+
+// uint8_t leds_brightness[NUM_LEDS];
+
+// CRGBPalette16 currentPalette;
+// TBlendType currentBlending;
+
+// extern CRGBPalette16 myRedWhiteBluePalette;
+// extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
 CRGB leds[NUM_LEDS];
-uint8_t leds_brightness[NUM_LEDS];
-
-// This example shows several ways to set up and use 'palettes' of colors
-// with FastLED.
-//
-// These compact palettes provide an easy way to re-colorize your
-// animation on the fly, quickly, easily, and with low overhead.
-//
-// USING palettes is MUCH simpler in practice than in theory, so first just
-// run this sketch, and watch the pretty lights as you then read through
-// the code.  Although this sketch has eight (or more) different color schemes,
-// the entire sketch compiles down to about 6.5K on AVR.
-//
-// FastLED provides a few pre-configured color palettes, and makes it
-// extremely easy to make up your own color schemes with palettes.
-//
-// Some notes on the more abstract 'theory and practice' of
-// FastLED compact palettes are at the bottom of this file.
-
-CRGBPalette16 currentPalette;
-TBlendType currentBlending;
-
-extern CRGBPalette16 myRedWhiteBluePalette;
-extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
-
 Settings::Settings settings;
-
 LightAnimation *animation = nullptr;
 
 void setup() {
-  delay(3000);  // power-up safety delay
+  delay(3000);
+
+  INIT_DEBUG(115200);
+
+  // Setup the FastLED library
+  DEBUG("Initializing FastLED Library");
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS)
       .setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
-  memset(leds_brightness, 0, NUM_LEDS);
 
+  // TEST CODE: Apply default settings
+  DEBUG("Initializing test settings");
   settings.setPalette(Settings::Palette::RAINBOW);
   // settings.setPalette(Settings::Palette::PURPLE_PURPLE_ORANGE);
   // settings.setPalette("red_white_blue_black");
@@ -56,83 +46,44 @@ void setup() {
   settings.setUpdatePaletteSpeed(1);
   settings.setPaletteDelay(1);
 
-  // animation = new StackAnimation(leds_brightness);
-  // animation = new BounceAnimation(leds_brightness);
+
+  DEBUG("Initializing animations library");
+  // animation = new StackAnimation(leds, settings.getPalette(), settings.getBlending());
+  animation =
+      new RainAnimation(leds, settings.getPalette(), settings.getBlending());
   // animation = new SolidAnimation(leds_brightness);
-  animation = new FlameFlickerAnimation(leds_brightness);
+  // animation = new FlameFlickerAnimation(leds_brightness);
+  // animation = new BounceAnimation(leds, settings.getPalette(), settings.getBlending());
 }
 
 void loop() {
-  uint8_t brightness = 255;
+  static uint16_t palette_index = 0;
+  static uint16_t frame = 0;
 
-  // ChangePalettePeriodically();
+  DEBUG("Main loop " + frame);
 
-  static uint8_t start_index = 0;
+  // Determine the speed at which the palette will flow through
+  // the animation, controlled by a palette speed (large increment)
+  // and a palette delay (small increment).
   EVERY_N_MILLISECONDS(settings.getPaletteDelay()) {
-    start_index =
-        start_index + settings.getUpdatePaletteSpeed(); /* motion speed */
+    palette_index += settings.getUpdatePaletteSpeed();
   }
-
-  // wave(startIndex);
-
-  // FillLEDsFromPaletteColors( startIndex);
-
-  // EVERY_N_MILLISECONDS(256) {
-  //  twinkle(startIndex, 12);
-  //}
 
   EVERY_N_MILLISECONDS(settings.getDelay()) {
-    animation->tick();
-    // switch (settings.getPattern()) {
-    // case Settings::Pattern::SOLID:
-    //   solid(255);
-    //   break;
-    // case Settings::Pattern::BOUNCE:
-    //   bounce(255);
-    //   break;
-    // case Settings::Pattern::STACK:
-    //   stack(255);
-    //   break;
-    // }
-
-    // smooth_snow(start_index, brightness, 12);
-    // solid_wave(255);
-    // twinkle_sin_wave(start_index);
-    // eyes();
+    DEBUG("Ticking animation");
+    animation->tick(palette_index, frame);
+    DEBUG("Completed animation tick");
+    ++frame;
   }
-
-  apply_color_palette(start_index);
 
   // Push any LED updates to be shown
+  DEBUG("Showing LEDs");
   FastLED.show();
   FastLED.delay(1000 / UPDATES_PER_SECOND);
+  DEBUG("Exiting main loop");  
 }
 
-// void colorWipe(CRGB c, int speed, int direction){
-//   for(int i=0; i<NUM_LEDS; i++){
-//     if(direction == 0){
-//       leds[i] = c;
-//     }
-//     else{
-//       leds[NUM_LEDS-1-i] = c;
-//     }
-//     FastLED.show();
-//     delay(speed);
-//   }
-// }
-
-// Using the defined color palette saved in `current_palette`, starting at
-// offset `start_index`, apply the color palette to each pixel on the strip
-void apply_color_palette(const uint8_t &start_index) {
-  for (size_t i = 0; i < NUM_LEDS; ++i) {
-    if (leds_brightness[i] > 0) {
-      leds[i] = ColorFromPalette(settings.getPalette(), start_index + i,
-                                 leds_brightness[i], settings.getBlending());
-    } else {
-      leds[i] = CRGB::Black;
-    }
-  }
-}
+/*
 
 // Apply a random brightness to each individual light on the strip
 void twinkle_wave(const uint8_t &min_brightness,
@@ -346,6 +297,7 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM = {
 
     CRGB::Red,  CRGB::Red,   CRGB::Gray,  CRGB::Gray,
     CRGB::Blue, CRGB::Blue,  CRGB::Black, CRGB::Black};
+*/
 
 // Additional notes on FastLED compact palettes:
 //

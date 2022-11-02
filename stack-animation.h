@@ -6,17 +6,27 @@
 
 class StackAnimation : public LightAnimation {
  public:
-  StackAnimation(uint8_t *leds_brightness)
-      : leds_brightness_(leds_brightness),
+  StackAnimation(CRGB *leds_, CRGBPalette16 palette, TBlendType blending)
+      : LightAnimation(leds_),
+        palette_(palette),
+        blending_(blending),
         direction_(FORWARD),
-        brightness_(255) {}
+        brightness_(255),
+        leds_brightness_(new uint8_t[NUM_LEDS]()) {}
+  ~StackAnimation() {
+    delete[] leds_brightness_;
+  }
   void reset();
-  void tick();
+  void tick(const uint16_t palette_frame, const uint16_t pattern_frame);
 
  private:
+  void apply_color_palette(const uint8_t palette_frame);
+
   uint8_t *leds_brightness_;
   bool direction_;
   uint8_t brightness_;
+  CRGBPalette16 palette_;
+  TBlendType blending_;
 };
 
 #endif
