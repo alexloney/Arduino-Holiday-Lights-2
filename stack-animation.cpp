@@ -1,5 +1,6 @@
-#include "defines.h"
 #include "stack-animation.h"
+
+#include "defines.h"
 
 void StackAnimation::reset() {}
 
@@ -63,7 +64,8 @@ void StackAnimation::tick(const uint16_t palette_frame,
           break;
         }
 
-        if (i < NUM_LEDS - 1 && leds_brightness_[i] && !leds_brightness_[i + 1]) {
+        if (i < NUM_LEDS - 1 && leds_brightness_[i] &&
+            !leds_brightness_[i + 1]) {
           leds_brightness_[i] = 0;
           leds_brightness_[i + 1] = brightness_;
           break;

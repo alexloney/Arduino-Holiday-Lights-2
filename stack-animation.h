@@ -13,9 +13,7 @@ class StackAnimation : public LightAnimation {
         direction_(FORWARD),
         brightness_(255),
         leds_brightness_(new uint8_t[NUM_LEDS]()) {}
-  ~StackAnimation() {
-    delete[] leds_brightness_;
-  }
+  ~StackAnimation() { delete[] leds_brightness_; }
   void reset();
   void tick(const uint16_t palette_frame, const uint16_t pattern_frame);
 

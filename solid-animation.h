@@ -14,9 +14,7 @@ class SolidAnimation : public LightAnimation {
         blending_(blending),
         brightness_(255),
         leds_brightness_(new uint8_t[NUM_LEDS]()) {}
-  ~SolidAnimation() {
-    delete[] leds_brightness_;
-  }
+  ~SolidAnimation() { delete[] leds_brightness_; }
   void reset();
   void tick(const uint16_t palette_frame, const uint16_t pattern_frame);
 

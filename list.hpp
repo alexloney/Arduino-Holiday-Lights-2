@@ -1,5 +1,5 @@
-// This is an implementation of a doubly-linked list with an Iterator for looping
-// through the list.
+// This is an implementation of a doubly-linked list with an Iterator for
+// looping through the list.
 
 template <class T>
 struct list_node {
@@ -10,40 +10,103 @@ struct list_node {
 template <class T>
 class List {
  public:
-	 class Iterator {
-		 public:
-			 Iterator(list_node<T> *node) : node_(node) {}
-			 const T &operator*() const {
-				 return node_->value;
-			 }
-			 Iterator &operator++() {
-				 node_ = node_->next;
-				 return *this;
-			 }
-			 bool operator!=(const List<T>::Iterator &that) const {
-				 return this->node_ != that.node_;
-			 }
-			 bool operator==(const List<T>::Iterator &that) const {
-				 return !(*this != that);
-			 }
-		 private:
-			 list_node<T> *node_;
-	 };
+  class Iterator {
+   public:
+    Iterator(list_node<T> *node) : node_(node) {}
+    T &operator*() { return node_->value; }
+    Iterator &operator++() {
+      node_ = node_->next;
+      return *this;
+    }
+    bool operator!=(const List<T>::Iterator &that) const {
+      return this->node_ != that.node_;
+    }
+    bool operator==(const List<T>::Iterator &that) const {
+      return !(*this != that);
+    }
 
-	 Iterator begin() const {
-		 return Iterator(head_);
-	 }
+   private:
+    list_node<T> *node_;
+  };
+  class Const_Iterator {
+   public:
+    Const_Iterator(list_node<T> *node) : node_(node) {}
+    const T &operator*() const { return node_->value; }
+    Const_Iterator &operator++() {
+      node_ = node_->next;
+      return *this;
+    }
+    bool operator!=(const List<T>::Const_Iterator &that) const {
+      return this->node_ != that.node_;
+    }
+    bool operator==(const List<T>::Const_Iterator &that) const {
+      return !(*this != that);
+    }
 
-	 Iterator end() const {
-		 return Iterator(tail_);
-	 }
+   private:
+    list_node<T> *node_;
+  };
+  class Reverse_Iterator {
+   public:
+    Reverse_Iterator(list_node<T> *node) : node_(node) {}
+    T &operator*() { return node_->value; }
+    Reverse_Iterator &operator++() {
+      node_ = node_->prev;
+      return *this;
+    }
+    bool operator!=(const List<T>::Reverse_Iterator &that) const {
+      return this->node_ != that.node_;
+    }
+    bool operator==(const List<T>::Reverse_Iterator &that) const {
+      return !(*this != that);
+    }
+
+   private:
+    list_node<T> *node_;
+  };
+  class Const_Reverse_Iterator {
+   public:
+    Const_Reverse_Iterator(list_node<T> *node) : node_(node) {}
+    const T &operator*() const { return node_->value; }
+    Const_Reverse_Iterator &operator++() {
+      node_ = node_->prev;
+      return *this;
+    }
+    bool operator!=(const List<T>::Const_Reverse_Iterator &that) const {
+      return this->node_ != that.node_;
+    }
+    bool operator==(const List<T>::Const_Reverse_Iterator &that) const {
+      return !(*this != that);
+    }
+
+   private:
+    list_node<T> *node_;
+  };
+
+  Iterator begin() { return Iterator(head_); }
+
+  Iterator end() { return Iterator(nullptr); }
+
+  Const_Iterator cbegin() const { return Const_Iterator(head_); }
+
+  Const_Iterator cend() const { return Const_Iterator(nullptr); }
+
+  Reverse_Iterator rbegin() { return Reverse_Iterator(tail_); }
+
+  Reverse_Iterator rend() { return Reverse_Iterator(nullptr); }
+
+  Const_Reverse_Iterator crbegin() const {
+    return Const_Reverse_Iterator(tail_);
+  }
+  Const_Reverse_Iterator crend() const {
+    return Const_Reverse_Iterator(nullptr);
+  }
 
   // Linked list constructor, initialize all values and pointers to zero.
   List() : head_(nullptr), tail_(nullptr), count_(0) {}
 
   // Linked list destructor, free all allocated memory
   ~List() {
-
     // Loop through the list and delete each node, since this is the
     // destructor, we don't need to worry about updating the next/prev
     // as we remove the items.
@@ -73,7 +136,7 @@ class List {
   T back() {
     if (tail_ == nullptr) {
       T blank;
-      return blank;  
+      return blank;
     }
     return tail_->value;
   }
@@ -105,19 +168,19 @@ class List {
     if (head_ != nullptr) {
       list_node<T> *tmp = head_;
       head_ = head_->next;
-      
+
       if (head_ == nullptr) {
-        tail_ = nullptr;        
+        tail_ = nullptr;
       } else {
         head_->prev = nullptr;
       }
-      
+
       ret_val = tmp->value;
       delete tmp;
-      
+
       --count_;
     }
-    
+
     return ret_val;
   }
 
@@ -136,7 +199,7 @@ class List {
     }
 
     if (head_ == nullptr) {
-      head_ = tail_;      
+      head_ = tail_;
     }
 
     ++count_;
@@ -149,22 +212,22 @@ class List {
     if (tail_ != nullptr) {
       list_node<T> *tmp = tail_;
       tail_ = tail_->prev;
-      
+
       if (tail_ == nullptr) {
-        head_ = nullptr;        
+        head_ = nullptr;
       } else {
         tail_->next = nullptr;
       }
-      
+
       ret_val = tmp->value;
       delete tmp;
-      
+
       --count_;
     }
-    
+
     return ret_val;
   }
-  
+
   // void insert();
   // void erase();
 

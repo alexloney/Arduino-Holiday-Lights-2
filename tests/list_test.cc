@@ -1,4 +1,6 @@
 #include <gtest/gtest.h>
+#include <iostream>
+using namespace std;
 
 #include "../list.hpp"
 
@@ -85,6 +87,104 @@ TEST(ListTest, Iterate) {
 	EXPECT_EQ(3, *it);
 	++it;
 	EXPECT_EQ(4, *it);
+	++it;
 	EXPECT_EQ(it, test_list.end());
 }
+
+TEST(ListTest, EditIterate) {
+	List<int> test_list;
+	test_list.push_back(1);
+	test_list.push_back(2);
+	EXPECT_EQ(2, test_list.size());
+
+	List<int>::Iterator it = test_list.begin();
+	EXPECT_EQ(1, *it);
+	*it = 3;
+	EXPECT_EQ(3, *it);
+	++it;
+	EXPECT_EQ(2, *it);
+	*it = 4;
+	EXPECT_EQ(4, *it);
+	++it;
+	EXPECT_EQ(it, test_list.end());
+}
+
+TEST(ListTest, ConstIterate) {
+	List<int> test_list;
+	test_list.push_back(1);
+	test_list.push_back(2);
+	test_list.push_back(3);
+	test_list.push_back(4);
+	EXPECT_EQ(4, test_list.size());
+
+	List<int>::Const_Iterator it = test_list.cbegin();
+	EXPECT_EQ(1, *it);
+	++it;
+	EXPECT_EQ(2, *it);
+	++it;
+	EXPECT_EQ(3, *it);
+	++it;
+	EXPECT_EQ(4, *it);
+	++it;
+	EXPECT_EQ(it, test_list.cend());
+}
+
+TEST(ListTest, ReverseIterate) {
+	List<int> test_list;
+	test_list.push_back(1);
+	test_list.push_back(2);
+	test_list.push_back(3);
+	test_list.push_back(4);
+	EXPECT_EQ(4, test_list.size());
+
+	List<int>::Reverse_Iterator it = test_list.rbegin();
+	EXPECT_EQ(4, *it);
+	++it;
+	EXPECT_EQ(3, *it);
+	++it;
+	EXPECT_EQ(2, *it);
+	++it;
+	EXPECT_EQ(1, *it);
+	++it;
+	EXPECT_EQ(it, test_list.rend());
+}
+
+TEST(ListTest, EditReverseIterate) {
+	List<int> test_list;
+	test_list.push_back(1);
+	test_list.push_back(2);
+	EXPECT_EQ(2, test_list.size());
+
+	List<int>::Reverse_Iterator it = test_list.rbegin();
+	EXPECT_EQ(2, *it);
+	*it = 3;
+	EXPECT_EQ(3, *it);
+	++it;
+	EXPECT_EQ(1, *it);
+	*it = 4;
+	EXPECT_EQ(4, *it);
+	++it;
+	EXPECT_EQ(it, test_list.rend());
+}
+
+TEST(ListTest, ConstReverseIterate) {
+	List<int> test_list;
+	test_list.push_back(1);
+	test_list.push_back(2);
+	test_list.push_back(3);
+	test_list.push_back(4);
+	EXPECT_EQ(4, test_list.size());
+
+	List<int>::Const_Reverse_Iterator it = test_list.crbegin();
+	EXPECT_EQ(4, *it);
+	++it;
+	EXPECT_EQ(3, *it);
+	++it;
+	EXPECT_EQ(2, *it);
+	++it;
+	EXPECT_EQ(1, *it);
+	++it;
+	EXPECT_EQ(it, test_list.crend());
+}
+
 

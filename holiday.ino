@@ -1,11 +1,10 @@
 #include <FastLED.h>
 
+#include "bounce-animation.h"
 #include "defines.h"
 #include "light-animation.h"
-#include "settings.hpp"
-
-#include "bounce-animation.h"
 #include "rain-animation.h"
+#include "settings.hpp"
 // #include "flame-flicker-animation.h"
 // #include "solid-animation.h"
 #include "stack-animation.h"
@@ -46,14 +45,15 @@ void setup() {
   settings.setUpdatePaletteSpeed(1);
   settings.setPaletteDelay(1);
 
-
   DEBUG("Initializing animations library");
-  // animation = new StackAnimation(leds, settings.getPalette(), settings.getBlending());
+  // animation = new StackAnimation(leds, settings.getPalette(),
+  // settings.getBlending());
   animation =
       new RainAnimation(leds, settings.getPalette(), settings.getBlending());
   // animation = new SolidAnimation(leds_brightness);
   // animation = new FlameFlickerAnimation(leds_brightness);
-  // animation = new BounceAnimation(leds, settings.getPalette(), settings.getBlending());
+  // animation = new BounceAnimation(leds, settings.getPalette(),
+  // settings.getBlending());
 }
 
 void loop() {
@@ -80,7 +80,7 @@ void loop() {
   DEBUG("Showing LEDs");
   FastLED.show();
   FastLED.delay(1000 / UPDATES_PER_SECOND);
-  DEBUG("Exiting main loop");  
+  DEBUG("Exiting main loop");
 }
 
 /*
