@@ -60,7 +60,7 @@ void loop() {
   static uint16_t palette_index = 0;
   static uint16_t frame = 0;
 
-  DEBUG("Main loop " + frame);
+  // DEBUG("Main loop " + frame);
 
   // Determine the speed at which the palette will flow through
   // the animation, controlled by a palette speed (large increment)
@@ -70,17 +70,17 @@ void loop() {
   }
 
   EVERY_N_MILLISECONDS(settings.getDelay()) {
-    DEBUG("Ticking animation");
+    // DEBUG("Ticking animation");
     animation->tick(palette_index, frame);
-    DEBUG("Completed animation tick");
+    // DEBUG("Completed animation tick");
     ++frame;
   }
 
   // Push any LED updates to be shown
-  DEBUG("Showing LEDs");
+  // DEBUG("Showing LEDs");
   FastLED.show();
   FastLED.delay(1000 / UPDATES_PER_SECOND);
-  DEBUG("Exiting main loop");
+  // DEBUG("Exiting main loop");
 }
 
 /*
